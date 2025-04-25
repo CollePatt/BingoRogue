@@ -1,6 +1,6 @@
 {
   "name": "bingo-roguelike",
-  "homepage": "https://collepatt.github.io/BingoRogue/",
+  "homepage": "https://collepatt.github.io/BingoRogue",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
