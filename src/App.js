@@ -5,7 +5,7 @@ import BingoBoard from './BingoBoard';
 
 function App() {
   return (
-    <div className="App">
+    <div className="main">
       <h1>BINGO BONGO</h1>
       <BingoBoard />
       

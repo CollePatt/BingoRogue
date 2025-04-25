@@ -5,3 +5,23 @@ body {
   background-color: #fefefe;
   text-align: center;
 }
+
+.main {
+  
+  margin: 20px auto;
+  max-width: 500px;
+  font-size: 22px;
+}
+
+.tile {
+  border: 2px solid black;
+  background-color: #f0f0f0;
+  padding: '20px';
+  text-align: 'center';
+  
+}
+
+.free-space {
+  font-size: 18px;
+  font-style: italic;
+}
