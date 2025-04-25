@@ -25,3 +25,19 @@ body {
   font-size: 18px;
   font-style: italic;
 }
+
+.new-game {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+summary {
+  cursor: pointer;
+  margin-bottom: 10px;
+}

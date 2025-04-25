@@ -127,7 +127,19 @@ function BingoBoard() {
                 ))}
             </div>
 
+            <p>Left Click to Mark, Right Click to Reroll</p>
             <p>Reroll Count: {rerollCount}</p>
+
+            <form>
+                <button type="button" onClick={() => setCard(generateBingoCard())} className='new-game'>
+                    New Game
+                </button>
+                <details>
+                    <summary>Reroll Options</summary>
+                    <input type="checkbox" id="replacement" name="replacement" />
+                    <label for="replacement">Allow replacement</label>
+                </details>
+            </form>
         </>
     );
 }
