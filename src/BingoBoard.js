@@ -1,83 +1,94 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Tile from './Components/tile';
 
 function generateBingoCard() {
-    const ranges = [
-        [1,15],
-        [16,30],
-        [31,45],
-        [46,60],
-        [61,75],
-    ];
+  const ranges = [
+    [1, 15],
+    [16, 30],
+    [31, 45],
+    [46, 60],
+    [61, 75],
+  ];
 
-    const card = [];
+  const columns = [];
 
-    for (let col = 0; col < 5; col++) {
-        const [min, max] = ranges[col];
-        const nums = new Set();
+  for (let col = 0; col < 5; col++) {
+    const [min, max] = ranges[col];
+    const nums = new Set();
 
-        while (nums.size < 5) {
-            nums.add(Math.floor(Math.random() * (max - min + 1)) + min);
-        }
-
-        card.push(Array.from(nums));
+    while (nums.size < 5) {
+      nums.add(Math.floor(Math.random() * (max - min + 1)) + min);
     }
 
-    const grid = [];
-    for (let row = 0; row < 5; row++) {
-        grid.push(card.map(col => col[row]));
-    }
+    const column = Array.from(nums).map((num, row) => ({
+      value: num, row, col,
+      colLabel: 'BINGO'[col],
+      rerolled: false,
+    }));
 
-    grid[2][2] = 'FREE';
+    columns.push(column);
+  }
 
-    return grid;
+  const grid = [];
+  for (let row = 0; row < 5; row++) {
+    grid.push(columns.map(col => col[row]));
+  }
+
+  grid[2][2].value = 'FREE';
+  grid[2][2].isFree = true;
+
+  return grid;
 }
 
 function BingoBoard() {
-    const card = generateBingoCard();
-    const columnLabels = ['B','I','N','G','O'];
+  const [card, setCard] = useState(generateBingoCard());
+  const columnRanges = [
+    [1, 15],
+    [16, 30],
+    [31, 45],
+    [46, 60],
+    [61, 75],
+  ];
 
-    return (
-        <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', marginBottom: '10px' }}>
-                {columnLabels.map((letter, index) => (
-                    <div
-                        key={index}
-                        style={{
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            fontSize: '24px',
-                            padding: '10px',
-                            backgroundColor:'rgb(142, 147, 156)',
-                            border: '1px solid #000',
-                        }}
-                    >
-                        {letter}
-                    </div>
-                ))}
-            </div>
+  const rerollTile = (tile) => {
+    const [min, max] = columnRanges[tile.col];
+    let newValue;
 
+    do {
+      newValue = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (newValue === tile.value);
 
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '5px'}}>
-                {card.flat().map((number, index) => (
-                    <div
-                        key={index}
-                        style={{
-                            border: '2px solid black',
-                            backgroundColor: '#f0f0f0',
-                            padding: '20px',
-                            textAlign: 'center',
-                            fontSize: number === 'FREE' ? '18px' : '22px',
-                            fontStyle: number === 'FREE' ? 'italic' : 'normal'
-
-                        }}
-                    >
-                        {number}
-                    </div>
-                ))}
-            </div>
-        </div>
+    const updatedCard = card.map(row =>
+      row.map(t => {
+        if (t === tile) {
+          return { ...t, value: newValue, rerolled: true };
+        }
+        return t;
+      })
     );
+
+    setCard(updatedCard);
+  };
+
+  const columnLabels = ['B', 'I', 'N', 'G', 'O'];
+
+  return (
+    <div className="bingo-container">
+      <div className="bingo-header">
+        {columnLabels.map((letter, index) => (
+          <div key={index} className="bingo-header-cell">
+            {letter}
+          </div>
+        ))}
+      </div>
+
+      <div className="bingo-grid">
+        {card.flat().map((tile, index) => (
+          <Tile key={index} tile={tile} rerollTile={rerollTile} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default BingoBoard;
