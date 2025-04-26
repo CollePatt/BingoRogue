@@ -122,3 +122,8 @@ body {
 .resources button:hover {
   background-color: #2980b9;
 }
+
+.hovered-match {
+  background-color: #fff3b0; 
+  border-color:#f1c40f;
+}

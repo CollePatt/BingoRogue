@@ -138,6 +138,8 @@ function BingoBoard() {
 
   const columnLabels = ['B', 'I', 'N', 'G', 'O'];
 
+  const [hoveredBall, setHoveredBall] = useState(null);
+
   return (
     <div className="bingo-container">
       {/* Display current balls */}
@@ -152,6 +154,8 @@ function BingoBoard() {
                 e.preventDefault();
                 rerollSingleBall(index);
               }}
+              onMouseEnter={() => setHoveredBall(ball)}
+              onMouseLeave={() => setHoveredBall(null)}
             >
               {ball.letter}-{ball.number}
             </div>
@@ -177,7 +181,7 @@ function BingoBoard() {
       {/* Bingo Tiles */}
       <div className="bingo-grid">
         {card.flat().map((tile, index) => (
-          <Tile key={index} tile={tile} />
+          <Tile key={index} tile={tile}  hoveredBall={hoveredBall} />
         ))}
       </div>
     </div>
