@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Tile from './Components/tile';
+import React, { useState, useEffect } from 'react';
+import Tile from './Components/Tile-Test';
 
 function generateBingoCard() {
   const ranges = [
@@ -21,9 +21,12 @@ function generateBingoCard() {
     }
 
     const column = Array.from(nums).map((num, row) => ({
-      value: num, row, col,
+      value: num,
+      row,
+      col,
       colLabel: 'BINGO'[col],
       rerolled: false,
+      selected: false,
     }));
 
     columns.push(column);
@@ -40,40 +43,129 @@ function generateBingoCard() {
   return grid;
 }
 
+// Helper to create full 75-ball pool
+function initializeBallPool() {
+  const ballPool = [];
+  const columns = ['B', 'I', 'N', 'G', 'O'];
+  for (let i = 0; i < 5; i++) {
+    const min = 1 + i * 15;
+    const max = 15 + i * 15;
+    for (let num = min; num <= max; num++) {
+      ballPool.push({
+        letter: columns[i],
+        number: num,
+        id: `${columns[i]}-${num}`,
+      });
+    }
+  }
+  return ballPool;
+}
+
 function BingoBoard() {
   const [card, setCard] = useState(generateBingoCard());
-  const columnRanges = [
-    [1, 15],
-    [16, 30],
-    [31, 45],
-    [46, 60],
-    [61, 75],
-  ];
+  const [ballPool, setBallPool] = useState(initializeBallPool());
+  const [currentBalls, setCurrentBalls] = useState([]);
+  const [rerollsLeft, setRerollsLeft] = useState(8);
+  const [selectsLeft, setSelectsLeft] = useState(10);
 
-  const rerollTile = (tile) => {
-    const [min, max] = columnRanges[tile.col];
-    let newValue;
+  // Draw 3 balls on start
+  useEffect(() => {
+    drawBalls(3);
+  }, []);
 
-    do {
-      newValue = Math.floor(Math.random() * (max - min + 1)) + min;
-    } while (newValue === tile.value);
+  // Draw N balls from ballPool
+  function drawBalls(count) {
+    if (ballPool.length < count) return; // Not enough balls left
+    const poolCopy = [...ballPool];
+    const drawnBalls = [];
+
+    for (let i = 0; i < count; i++) {
+      const idx = Math.floor(Math.random() * poolCopy.length);
+      drawnBalls.push(poolCopy[idx]);
+      poolCopy.splice(idx, 1); // remove from copy
+    }
+
+    setCurrentBalls(drawnBalls);
+  }
+
+  // Reroll all 3 balls
+  function rerollAllBalls() {
+    if (rerollsLeft < 1) return;
+    drawBalls(3);
+    setRerollsLeft(r => r - 1);
+  }
+
+  // Reroll a single ball
+  function rerollSingleBall(index) {
+    if (rerollsLeft < 2) return;
+    if (ballPool.length < 1) return;
+
+    const poolCopy = [...ballPool];
+    const idx = Math.floor(Math.random() * poolCopy.length);
+    const newBall = poolCopy[idx];
+
+    const newCurrent = [...currentBalls];
+    newCurrent[index] = newBall;
+
+    setCurrentBalls(newCurrent);
+    setRerollsLeft(r => r - 2);
+  }
+
+  // Selecting a ball to mark on the board
+  function selectBall(ball) {
+    if (selectsLeft <= 0) return;
 
     const updatedCard = card.map(row =>
-      row.map(t => {
-        if (t === tile) {
-          return { ...t, value: newValue, rerolled: true };
+      row.map(tile => {
+        if (tile.value === ball.number && tile.colLabel === ball.letter) {
+          return { ...tile, selected: true };
         }
-        return t;
+        return tile;
       })
     );
 
+    // Remove selected ball from pool
+    const newPool = ballPool.filter(b => b.id !== ball.id);
+
+    // Remove ball from currentBalls
+    const newCurrentBalls = currentBalls.filter(b => b.id !== ball.id);
+
     setCard(updatedCard);
-  };
+    setBallPool(newPool);
+    setCurrentBalls(newCurrentBalls);
+    setSelectsLeft(s => s - 1);
+  }
 
   const columnLabels = ['B', 'I', 'N', 'G', 'O'];
 
   return (
     <div className="bingo-container">
+      {/* Display current balls */}
+      <div className="ball-area">
+        <div className="ball-display">
+          {currentBalls.map((ball, index) => (
+            <div
+              key={ball.id}
+              className="ball"
+              onClick={() => selectBall(ball)}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                rerollSingleBall(index);
+              }}
+            >
+              {ball.letter}-{ball.number}
+            </div>
+          ))}
+        </div>
+
+        <div className="resources">
+          <p>Rerolls Left: {rerollsLeft}</p>
+          <p>Selects Left: {selectsLeft}</p>
+          <button onClick={rerollAllBalls}>Reroll All</button>
+        </div>
+      </div>
+
+      {/* Bingo Header */}
       <div className="bingo-header">
         {columnLabels.map((letter, index) => (
           <div key={index} className="bingo-header-cell">
@@ -82,9 +174,10 @@ function BingoBoard() {
         ))}
       </div>
 
+      {/* Bingo Tiles */}
       <div className="bingo-grid">
         {card.flat().map((tile, index) => (
-          <Tile key={index} tile={tile} rerollTile={rerollTile} />
+          <Tile key={index} tile={tile} />
         ))}
       </div>
     </div>
