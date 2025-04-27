@@ -214,6 +214,7 @@ function BingoBoard() {
       </div>
 
       {Marquee()}
+      <p className="marquee-text">Balls left in the pool</p>
     </div>
 
     
