@@ -132,6 +132,7 @@ body {
   display: grid;
   grid-template-columns: repeat(16, 1fr); /* 16 columns */
   grid-template-rows: repeat(5, auto); /* 5 rows */
+  margin-top: 20px;
   padding: 10px;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
@@ -146,13 +147,18 @@ body {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: bold;
   text-align: center;
+  color: #333;
 }
 
 .marquee-ball.letter {
   background-color: #f0f0f0;
   font-weight: bold;
-  color: #333;
+}
+
+.marquee-ball.drawn {
+  color: #fffb00;
+  background-color: darkgrey;
 }

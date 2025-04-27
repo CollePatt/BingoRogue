@@ -142,13 +142,27 @@ function BingoBoard() {
 
   function Marquee() {
 
-    
+    // 
     return (
       <div className="marquee">
-        {ballPool.map((ball, index) => (
-          <div key={index} className="marquee-ball">
-            {ball.number}
-          </div>
+        {columnLabels.map((letter, colIndex) => (
+        <>
+          <div className="marquee-ball letter">{letter}</div>
+          {
+          Array.from({ length: 15 }, (_, rowIndex) => {
+
+            const number = colIndex * 15 + rowIndex + 1;
+            const ballInPool = ballPool.find(ball => ball.number === number && ball.letter === letter);
+
+            return (
+              <div 
+                key={`${letter}-${number}`}
+                className={`marquee-ball ${ballInPool ? ' ' : 'drawn'}`}>
+                  {number}
+              </div>
+              );
+          })}
+        </>
         ))}
       </div>
     );
