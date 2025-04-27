@@ -140,6 +140,20 @@ function BingoBoard() {
 
   const [hoveredBall, setHoveredBall] = useState(null);
 
+  function Marquee() {
+
+    
+    return (
+      <div className="marquee">
+        {ballPool.map((ball, index) => (
+          <div key={index} className="marquee-ball">
+            {ball.number}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="bingo-container">
       {/* Display current balls */}
@@ -184,7 +198,11 @@ function BingoBoard() {
           <Tile key={index} tile={tile}  hoveredBall={hoveredBall} />
         ))}
       </div>
+
+      {Marquee()}
     </div>
+
+    
   );
 }
 

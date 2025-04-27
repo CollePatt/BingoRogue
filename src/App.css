@@ -127,3 +127,32 @@ body {
   background-color: #fff3b0; 
   border-color:#f1c40f;
 }
+
+.marquee {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr); /* 16 columns */
+  grid-template-rows: repeat(5, auto); /* 5 rows */
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.marquee-ball {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.marquee-ball.letter {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  color: #333;
+}
